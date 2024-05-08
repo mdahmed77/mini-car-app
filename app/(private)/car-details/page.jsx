@@ -111,6 +111,7 @@ const CarDetails = () => {
       console.log(response.data)
       if (response.status === 200) {
         toast.success("Car Added Successfully")
+        window.location.reload();
       } else {
         toast.error("Faild to Submit")
       }

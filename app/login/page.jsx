@@ -7,6 +7,8 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { FormItem } from '@/components/ui/form';
 import { Label } from '@/components/ui/label';
+import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
+import { useState } from 'react';
 
 const schema = z.object({
   email: z.string().email(),
@@ -15,6 +17,12 @@ const schema = z.object({
 
 
 const login = () => {
+
+  const [passwordVisible, setPasswordVisible] = useState(true);
+  const handlePasswordVisibility = () => {
+    setPasswordVisible(!passwordVisible);
+  }
+
   const { register, handleSubmit, formState: { errors } } = useForm({
     resolver: zodResolver(schema),
   });
@@ -40,8 +48,14 @@ const login = () => {
           </FormItem>
           <FormItem className="relative">
             <Label className="font-bold text-base" htmlFor="password">Password</Label>
-            <Input id={'password'} className="min-h-12 !ring-0 !ring-offset-0 shadow-[0_2px_3px_0_rgba(0,0,0,0.1)] !mt-1 !mb-6" type="password" {...register('password')} />
+            <Input id={'password'} className="min-h-12 !ring-0 !ring-offset-0 shadow-[0_2px_3px_0_rgba(0,0,0,0.1)] !mt-1 !mb-6" type={passwordVisible ? 'password' : 'text'} {...register('password')} />
             {errors.password && <span className='text-rose-600 font-normal text-sm absolute bottom-1'>{errors.password.message}</span>}
+            <button type='button' onClick={handlePasswordVisibility} className='absolute top-[34px] z-10 right-3'>
+              {passwordVisible
+                ? <EyeIcon className='h-5 w-5' />
+                : <EyeSlashIcon className='h-5 w-5' />
+              }
+            </button>
           </FormItem>
           <Button className="mt-2 text-lg font-bold min-h-14 rounded-full" type="submit">Login</Button>
         </form>

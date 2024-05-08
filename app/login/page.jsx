@@ -20,7 +20,7 @@ const schema = z.object({
   password: z.string().min(6),
 });
 
-const login = () => {
+const Login = () => {
   const router = useRouter();
 
   const [passwordVisible, setPasswordVisible] = useState(true);
@@ -72,10 +72,10 @@ const login = () => {
   };
 
   return (
-    <div className="relative flex h-[100dvh] w-full items-center justify-center bg-white">
+    <div className="relative flex min-h-[100vh] w-full items-center justify-center bg-white">
       <Toaster />
       <div className="top-0 left-0 -translate-y-1/2 -translate-x-1/2 absolute h-[400px] w-[400px] bg-gradient-to-r from-violet-600 to-aqua-700 rounded-full z-10"></div>
-      <div className="absolute h-[100dvh] w-full bg-gradient-to-br from-white/30 to-violet-400/50 z-20 backdrop-blur-3xl"></div>
+      <div className="absolute h-full w-full bg-gradient-to-br from-white/30 to-violet-400/50 z-20 backdrop-blur-3xl"></div>
       <div className="relative z-30 max-w-[500px] w-full flex flex-col items-center gap-2 text-center">
         <h1 className="text-4xl font-normal text-slate-900">
           <span className="font-bold text-violet-700">Login</span>
@@ -143,4 +143,4 @@ const login = () => {
   );
 };
 
-export default login;
+export default Login;

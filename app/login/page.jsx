@@ -72,7 +72,7 @@ const login = () => {
   };
 
   return (
-    <div className="relative flex h-[100dvh] w-full items-center justify-center  bg-white">
+    <div className="relative flex h-[100dvh] w-full items-center justify-center bg-white">
       <Toaster />
       <div className="top-0 left-0 -translate-y-1/2 -translate-x-1/2 absolute h-[400px] w-[400px] bg-gradient-to-r from-violet-600 to-aqua-700 rounded-full z-10"></div>
       <div className="absolute h-[100dvh] w-full bg-gradient-to-br from-white/30 to-violet-400/50 z-20 backdrop-blur-3xl"></div>

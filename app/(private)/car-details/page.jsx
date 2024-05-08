@@ -26,11 +26,13 @@ import {
 } from "@/components/ui/select";
 import Image from "next/image";
 import React, { useState } from "react";
-import { PhotoIcon } from "@heroicons/react/24/outline";
+import { PhotoIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
+import toast, { Toaster } from 'react-hot-toast';
+
 
 // Define your Zod schema
 const schema = z.object({
@@ -87,6 +89,11 @@ const CarDetails = () => {
     field.onChange(files)
   };
 
+  const removeImage = (index) => {
+    selectedFiles.slice(index, 0)
+    selectedFileUrls.slice(index, 0)
+  }
+
   const handleLimitChange = (e) => {
     setFileLimit(parseInt(e, 10));
   };
@@ -95,14 +102,19 @@ const CarDetails = () => {
     resolver: zodResolver(schema),
   });
 
-  const onSubmit = async(data) => {
+  const onSubmit = async (data) => {
     data.files = selectedFiles
-    console.log(data);
     setSubmitting(true);
     try {
       // Validate form data against the schema
-      const result = await axios.post('/api/vehicle', data);
-      console.log(result)
+      const response = await axios.post('/api/vehicle', data);
+      console.log(response.data)
+      if (response.status === 200) {
+        toast.success("Car Added Successfully")
+      } else {
+        toast.error("Faild to Submit")
+      }
+
       form.reset()
     } catch (error) {
       // If validation fails, log the validation errors
@@ -112,9 +124,10 @@ const CarDetails = () => {
   };
 
   return (
-    <div className="relative flex h-[100dvh] w-full items-center justify-center  bg-white">
+    <div className="relative flex min-h-[100vh] w-full items-center justify-center  bg-white py-5">
+      <Toaster />
       <div className="top-0 left-0 -translate-y-1/2 -translate-x-1/2 absolute h-[400px] w-[400px] bg-gradient-to-r from-violet-600 to-aqua-700 rounded-full z-10"></div>
-      <div className="absolute h-[100dvh] w-full bg-gradient-to-br from-white/30 to-violet-400/50 z-20 backdrop-blur-3xl"></div>
+      <div className="absolute h-full w-full bg-gradient-to-br from-white/30 to-violet-400/50 z-20 backdrop-blur-3xl"></div>
       <div className="relative z-30 max-w-[700px] w-full flex flex-col items-center gap-2 text-center px-5">
         <h1 className="text-4xl font-normal text-slate-900">
           <span className="font-bold text-violet-700">Enter Car Details</span>
@@ -135,7 +148,7 @@ const CarDetails = () => {
                     </FormLabel>
                     <Input
                       id="model"
-                      className="w-full min-h-12 !ring-0 !ring-offset-0 shadow-[0_2px_3px_0_rgba(0,0,0,0.1)] !mt-1 !mb-6"
+                      className="w-full min-h-12 !ring-0 !ring-offset-0 shadow-[0_2px_3px_0_rgba(0,0,0,0.1)] !mt-1 !mb-0"
                       type="text"
                       onChange={field.onChange}
                     />
@@ -154,7 +167,7 @@ const CarDetails = () => {
                     </FormLabel>
                     <Input
                       id="price"
-                      className="w-full min-h-12 !ring-0 !ring-offset-0 shadow-[0_2px_3px_0_rgba(0,0,0,0.1)] !mt-1 !mb-6"
+                      className="w-full min-h-12 !ring-0 !ring-offset-0 shadow-[0_2px_3px_0_rgba(0,0,0,0.1)] !mt-1 !mb-0"
                       type="number"
                       min={1}
                       onChange={field.onChange}
@@ -177,7 +190,7 @@ const CarDetails = () => {
                       id="phone"
                       name="phone"
                       onChange={field.onChange}
-                      className="w-full min-h-12 !ring-0 !ring-offset-0 shadow-[0_2px_3px_0_rgba(0,0,0,0.1)] !mt-1 !mb-6"
+                      className="w-full min-h-12 !ring-0 !ring-offset-0 shadow-[0_2px_3px_0_rgba(0,0,0,0.1)] !mt-1 !mb-0"
                     />
                     <FormMessage />
                   </FormItem>
@@ -201,7 +214,7 @@ const CarDetails = () => {
                       name="city"
                       className="w-full"
                     >
-                      <SelectTrigger className="w-full min-h-12 !ring-0 !ring-offset-0 shadow-[0_2px_3px_0_rgba(0,0,0,0.1)] !mt-1 !mb-6">
+                      <SelectTrigger className="w-full min-h-12 !ring-0 !ring-offset-0 shadow-[0_2px_3px_0_rgba(0,0,0,0.1)] !mt-1 !mb-0">
                         <SelectValue placeholder="Select your City" />
                       </SelectTrigger>
                       <SelectContent>
@@ -223,7 +236,7 @@ const CarDetails = () => {
                 name="no_of_copies"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel class="font-bold text-base mb-1 block">
+                    <FormLabel className="font-bold text-base mb-1 block">
                       No of Copies
                     </FormLabel>
                     <Select
@@ -235,7 +248,7 @@ const CarDetails = () => {
                       defaultValue={field}
                     >
                       <FormControl>
-                        <SelectTrigger>
+                        <SelectTrigger className="w-full min-h-12 !ring-0 !ring-offset-0 shadow-[0_2px_3px_0_rgba(0,0,0,0.1)] !mt-1 !mb-0">
                           <SelectValue placeholder="Select no. of copies" />
                         </SelectTrigger>
                       </FormControl>
@@ -252,13 +265,13 @@ const CarDetails = () => {
                   </FormItem>
                 )}
               />
-            
+
             </div>
             <div className="col-span-12">
-              <Label htmlFor="phone" className="font-bold text-base mb-2 block">
+              <Label htmlFor="phone" className="font-bold text-base mb-2 block mt-3">
                 Upload Pictures
               </Label>
-              <div className="gap-3 inline-flex">
+              <div className="gap-3 flex flex-wrap">
                 <div className="group relative h-24 min-w-24 inline-flex items-center justify-center rounded-md border border-dashed border-slate-500 bg-white/50 transition-colors duration-200 ease-out hover:bg-violet-700/10 hover:border-violet-800 ">
                   <FormField
                     name="files"
@@ -279,18 +292,19 @@ const CarDetails = () => {
                     )}
                   />
                 </div>
-                {selectedFileUrls.map((file) => (
-                  <>
-                    <AspectRatio ratio={16 / 9}>
-                      <Image
-                        src={file}
-                        alt="Image"
-                        className="rounded-md object-cover max-w-24 aspect-square"
-                        width={100}
-                        height={100}
-                      />
-                    </AspectRatio>
-                  </>
+                {selectedFileUrls.map((file, index) => (
+                  <div key={index} className="relative inline-flex">
+                    <span key={index} onClick={() => removeImage(index)} className="h-5 w-5 inline-flex items-center justify-center bg-red-700 rounded-full absolute right-0 top-0 translate-x-1/2 -translate-y-1/2">
+                      <XMarkIcon className="text-white h-3 w-3" />
+                    </span>
+                    <Image
+                      src={file}
+                      alt="Image"
+                      className="rounded-md object-cover max-w-24 aspect-square"
+                      width={100}
+                      height={100}
+                    />
+                  </div>
                 ))}
               </div>
             </div>

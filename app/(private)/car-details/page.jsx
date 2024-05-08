@@ -90,10 +90,10 @@ const CarDetails = () => {
   };
 
   const removeImage = (index) => {
-    selectedFiles.slice(index, 0)
-    selectedFileUrls.slice(index, 0)
+    // Remove the item at the given index from both arrays
+    setSelectedFiles(prevFiles => prevFiles.filter((_, i) => i !== index));
+    setSelectedFileUrls(prevUrls => prevUrls.filter((_, i) => i !== index));
   }
-
   const handleLimitChange = (e) => {
     setFileLimit(parseInt(e, 10));
   };
@@ -294,7 +294,7 @@ const CarDetails = () => {
                 </div>
                 {selectedFileUrls.map((file, index) => (
                   <div key={index} className="relative inline-flex">
-                    <span key={index} onClick={() => removeImage(index)} className="h-5 w-5 inline-flex items-center justify-center bg-red-700 rounded-full absolute right-0 top-0 translate-x-1/2 -translate-y-1/2">
+                    <span key={index} onClick={() => removeImage(index)} className="h-5 w-5 inline-flex items-center justify-center bg-red-700 rounded-full absolute right-0 top-0 translate-x-1/2 -translate-y-1/2 cursor-pointer">
                       <XMarkIcon className="text-white h-3 w-3" />
                     </span>
                     <Image

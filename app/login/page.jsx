@@ -54,9 +54,8 @@ const login = () => {
         console.log("Server error!");
         alert("Server error!");
       } else {
-        alert("Login successfull!");
-        // router.push("/car-details");
-        // console.log(response);
+        // display toaster here
+    
       }
     }
   };

@@ -1,5 +1,6 @@
 "use client";
 // importing necessary functions
+import axios from "axios"
 import { useSession, signIn, signOut } from "next-auth/react";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Input } from "@/components/ui/input";
@@ -38,12 +39,14 @@ const schema = z.object({
   phone: z.string().regex(/^\+?\d{1,15}$/, { message: "Invalid Phone number" }),
   city: z.string().min(1),
   no_of_copies: z.string().min(1).max(1),
+  files: z.any()
 });
 
 const CarDetails = () => {
   // extracting data from usesession as session
   const [fileLimit, setFileLimit] = useState(1);
   const [selectedFiles, setSelectedFiles] = useState([]);
+  const [selectedFileUrls, setSelectedFileUrls] = useState([]);
   const [imageSrc, setImageSrc] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -68,7 +71,7 @@ const CarDetails = () => {
     }
   };
 
-  const handleFileChange = (e) => {
+  const handleFileChange = (e, field) => {
     const files = Array.from(e.target.files).slice(0, fileLimit);
     const fileUrls = [];
 
@@ -79,7 +82,9 @@ const CarDetails = () => {
       const cleanFileUrl = new URL(fileUrl).toString();
       fileUrls.push(cleanFileUrl);
     }
-    setSelectedFiles(fileUrls);
+    setSelectedFileUrls(fileUrls)
+    setSelectedFiles(files)
+    field.onChange(files)
   };
 
   const handleLimitChange = (e) => {
@@ -90,18 +95,19 @@ const CarDetails = () => {
     resolver: zodResolver(schema),
   });
 
-  const onSubmit = (data) => {
+  const onSubmit = async(data) => {
+    data.files = selectedFiles
     console.log(data);
-    // setSubmitting(true);
-    // try {
-    //   // Validate form data against the schema
-    //   await schema.validate(data);
-    //   // If validation succeeds, proceed with form submission
-    //   console.log("Form data:", data);
-    // } catch (error) {
-    //   // If validation fails, log the validation errors
-    //   console.error("Validation error:", error);
-    // }
+    setSubmitting(true);
+    try {
+      // Validate form data against the schema
+      const result = await axios.post('/api/vehicle', data);
+      console.log(result)
+      form.reset()
+    } catch (error) {
+      // If validation fails, log the validation errors
+      console.error("Validation error:", error);
+    }
     // setSubmitting(false);
   };
 
@@ -246,28 +252,7 @@ const CarDetails = () => {
                   </FormItem>
                 )}
               />
-              {/* <Label
-                className="font-bold text-base mb-1 block"
-                htmlFor="no_of_copies"
-              >
-                Select No. of Copies
-              </Label>
-              <Select id="no_of_copies" className="w-full">
-                <SelectTrigger className="w-full min-h-12 !ring-0 !ring-offset-0 shadow-[0_2px_3px_0_rgba(0,0,0,0.1)] !mt-1 !mb-6">
-                  <SelectValue placeholder="Number of Copies" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectLabel>No of Copies</SelectLabel>
-                    
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-              {errors?.number_of_copies && (
-                <span className="text-rose-600 font-normal text-sm absolute bottom-1">
-                  {error.number_of_copies.message}
-                </span>
-              )} */}
+            
             </div>
             <div className="col-span-12">
               <Label htmlFor="phone" className="font-bold text-base mb-2 block">
@@ -275,17 +260,26 @@ const CarDetails = () => {
               </Label>
               <div className="gap-3 inline-flex">
                 <div className="group relative h-24 min-w-24 inline-flex items-center justify-center rounded-md border border-dashed border-slate-500 bg-white/50 transition-colors duration-200 ease-out hover:bg-violet-700/10 hover:border-violet-800 ">
-                  <Input
-                    id="pictures"
-                    className="absolute h-full w-full inset-0 opacity-0 z-10 cursor-pointer"
-                    type="file"
-                    accept="image/*"
-                    multiple
-                    onChange={handleFileChange}
+                  <FormField
+                    name="files"
+                    render={({ field }) => (
+                      <FormItem>
+                        <Input
+                          id="pictures"
+                          className="absolute h-full w-full inset-0 opacity-0 z-10 cursor-pointer"
+                          type="file"
+                          accept="image/*"
+                          multiple
+                          onChange={(e) => {
+                            handleFileChange(e, field)
+                          }}
+                        />
+                        <PhotoIcon className="h-8 w-8 group-hover:text-violet-700" />
+                      </FormItem>
+                    )}
                   />
-                  <PhotoIcon className="h-8 w-8 group-hover:text-violet-700" />
                 </div>
-                {selectedFiles.map((file) => (
+                {selectedFileUrls.map((file) => (
                   <>
                     <AspectRatio ratio={16 / 9}>
                       <Image

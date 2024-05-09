@@ -1,7 +1,9 @@
 import { Inter } from "next/font/google";
 import "./globals.css";
-const inter = Inter({ subsets: ["latin"] });
 import SessionWrapper from '@/components/SessionWrapper';
+import {Toaster} from 'react-hot-toast';
+
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
   title: "Mini Car App",

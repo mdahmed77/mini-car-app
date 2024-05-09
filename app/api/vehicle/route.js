@@ -1,21 +1,20 @@
 // api/vehicle
+import {NextResponse} from "next/server"
 
 import { insertVehicle, getAllVehicles } from '../../mockData';
 
-export default function handler(req, res) {
-  if (req.method === 'POST') {
-    const { make, model, year } = req.body;
+export function POST(req){
+  try{
+    const { model, price, phone, city, no_of_copies, files } = req.body;
 
     // Mock insertion
-    insertVehicle({ make, model, year });
+    insertVehicle({ make, price, phone, city, no_of_copies, files });
 
     // Respond with success message
-    res.status(200).json({ message: 'Vehicle inserted successfully.' });
-  } else if (req.method === 'GET') {
-    // Return all vehicles
-    const vehicles = getAllVehicles();
-    res.status(200).json(vehicles);
-  } else {
-    res.status(405).json({ message: 'Method Not Allowed' });
+    return NextResponse.json({
+      message: 'Vehicle inserted successfully'
+    })
+  }catch(error){
+    return NextResponse.json(error)
   }
 }

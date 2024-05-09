@@ -9,6 +9,8 @@ import { FormItem } from "@/components/ui/form";
 import { Label } from "@/components/ui/label";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 import { useState } from "react";
+import toast, { Toaster } from 'react-hot-toast';
+
 
 // importing necessary functions
 import { signIn } from "next-auth/react";
@@ -19,6 +21,8 @@ const schema = z.object({
 });
 
 const login = () => {
+  const router = useRouter();
+
   const [passwordVisible, setPasswordVisible] = useState(true);
   const handlePasswordVisibility = () => {
     setPasswordVisible(!passwordVisible);
@@ -32,7 +36,6 @@ const login = () => {
     resolver: zodResolver(schema),
   });
 
-  const router = useRouter();
 
   const onSubmit = async (data) => {
     if (!errors.email && !errors.password) {
@@ -42,26 +45,33 @@ const login = () => {
         redirect: false,
       });
 
-      console.log(response);
+      // display toaster here
+      if(response.error){
+        toast.error('Invalid credentials');
+      }
+
       if (
         response.status === 400 ||
         response.status === 401 ||
         response.status === 403
       ) {
         console.log("Invalid Credentials!");
-        alert("Invalid Credentials!");
+        // display toaster here
+
       } else if (response.status === 500) {
         console.log("Server error!");
-        alert("Server error!");
-      } else {
         // display toaster here
-    
+      
+      } else {
+        toast.success("Logged in successfully")
+        router.push("/car-details")
       }
     }
   };
 
   return (
     <div className="relative flex h-[100dvh] w-full items-center justify-center  bg-white">
+      <Toaster />
       <div className="top-0 left-0 -translate-y-1/2 -translate-x-1/2 absolute h-[400px] w-[400px] bg-gradient-to-r from-violet-600 to-aqua-700 rounded-full z-10"></div>
       <div className="absolute h-[100dvh] w-full bg-gradient-to-br from-white/30 to-violet-400/50 z-20 backdrop-blur-3xl"></div>
       <div className="relative z-30 max-w-[500px] w-full flex flex-col items-center gap-2 text-center">

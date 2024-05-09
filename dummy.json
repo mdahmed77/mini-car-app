@@ -1,0 +1,10 @@
+{
+    "title": "Dummy User data",
+    "users": [
+        {
+            "id": 1,
+            "email": "Amjad@desolint.com",
+            "password": "123456abc"
+        }
+    ]
+}

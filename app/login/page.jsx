@@ -45,26 +45,28 @@ const login = () => {
         redirect: false,
       });
 
+      console.log(response)
+
       // display toaster here
       if(response.error){
         toast.error('Invalid credentials');
-      }
-
-      if (
-        response.status === 400 ||
-        response.status === 401 ||
-        response.status === 403
-      ) {
-        console.log("Invalid Credentials!");
-        // display toaster here
-
-      } else if (response.status === 500) {
-        console.log("Server error!");
-        // display toaster here
-      
-      } else {
-        toast.success("Logged in successfully")
-        router.push("/car-details")
+      }else{
+        if (
+          response.status === 400 ||
+          response.status === 401 ||
+          response.status === 403
+        ) {
+          console.log("Invalid Credentials!");
+          // display toaster here
+  
+        } else if (response.status === 500) {
+          console.log("Server error!");
+          // display toaster here
+        
+        } else {
+          toast.success("Logged in successfully")
+          router.push("/car-details")
+        }
       }
     }
   };
